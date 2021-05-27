@@ -29,7 +29,7 @@ Vagrant.configure('2') do |config|
   # Definition of the virtual machine that will be hosting cordra repository server
   config.vm.define cordra_nsidr_server_name, autostart:true do |cordra_nsidr_server|
       machine_name = cordra_nsidr_server_name
-      cordra_nsidr_server.vm.network "private_network", name: "vboxnet0", ip: "172.28.128.8", adapter: 2
+      # cordra_nsidr_server.vm.network "private_network", name: "vboxnet0", ip: "172.28.128.8", adapter: 2
 
       # Specific setup for this virtual machine when using the virtualbox provider
       cordra_nsidr_server.vm.provider "virtualbox" do |h, override|
