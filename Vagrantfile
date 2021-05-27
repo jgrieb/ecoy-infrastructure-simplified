@@ -25,11 +25,11 @@ Vagrant.configure('2') do |config|
     sed -i "s/ansible_ssh_user=.*/ansible_ssh_user=$SSH_USERNAME/g" "$INVENTORY_FILE"
   SCRIPT
 
-  cordra_nsidr_server_name = 'first_test_server'
+  cordra_nsidr_server_name = 'cordra_nsidr_server'
   # Definition of the virtual machine that will be hosting cordra repository server
   config.vm.define cordra_nsidr_server_name, autostart:true do |cordra_nsidr_server|
       machine_name = cordra_nsidr_server_name
-      # cordra_nsidr_server.vm.network "private_network", name: "vboxnet0", ip: "172.28.128.8", adapter: 2
+      cordra_nsidr_server.vm.network "private_network", name: "vboxnet0", ip: "172.28.128.8", adapter: 2
 
       # Specific setup for this virtual machine when using the virtualbox provider
       cordra_nsidr_server.vm.provider "virtualbox" do |h, override|
@@ -43,7 +43,26 @@ Vagrant.configure('2') do |config|
         s_inventory.args          = [mount_synced_folder+'/ansible/inventory.ini',machine_name,ssh_username]
         s_inventory.privileged    = false
       end
+  end
 
+  cordra_nsidr_server_name = 'second_cordra_nsidr_server'
+  # Definition of the virtual machine that will be hosting cordra repository server
+  config.vm.define cordra_nsidr_server_name, autostart:true do |cordra_nsidr_server|
+      machine_name = cordra_nsidr_server_name
+      cordra_nsidr_server.vm.network "private_network", name: "vboxnet0", ip: "172.28.128.7", adapter: 2
+
+      # Specific setup for this virtual machine when using the virtualbox provider
+      cordra_nsidr_server.vm.provider "virtualbox" do |h, override|
+        h.memory = 1024
+        h.cpus = 1
+      end
+
+      # Provisioner that run the script that updates the ansible inventory with the IP assigned to this virtual machine
+      cordra_nsidr_server.vm.provision "update_inventory", type: "shell" do |s_inventory|
+        s_inventory.inline        = $update_inventory_script
+        s_inventory.args          = [mount_synced_folder+'/ansible/inventory.ini',machine_name,ssh_username]
+        s_inventory.privileged    = false
+      end
   end
 
 end

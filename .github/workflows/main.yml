@@ -2,7 +2,7 @@
 
 name: vagrant-up
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
@@ -28,12 +28,15 @@ jobs:
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: echo Hello, world!
-        
+
       - name: Show Vagrant version
         run: vagrant --version
+
+      - name: Create virtualbox hostonly network
+        run: VBoxManage hostonlyif create && VBoxManage hostonlyif ipconfig vboxnet0 --ip 172.28.128.1
 
       - name: Run vagrant up
         run: vagrant up
 
       - name: ssh into box after boot
-        run: vagrant ssh -c "echo 'hello world!' && echo hostname -I "
+        run: vagrant ssh cordra_nsidr_server -c "echo 'hello world!' && echo hostname -I "
